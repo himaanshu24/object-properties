@@ -1,9 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import List from './components/List';
-import { materialAttr, materialValues } from './data/data';
+// import { materialAttr, materialValues } from './data/data';
 
 import './styles.css';
+
+const MOCK_API = 'https://demo3859983.mockable.io/object-data';
 
 // Sorting the values according to the rank
 const sortObj = obj =>
@@ -15,14 +17,16 @@ class Material extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			attributes: materialAttr,
-			values: sortObj(materialValues)
+			attributes: [],
+			values: []
 		};
 	}
 
 	onClickValueHandler = evt => {
 		evt.preventDefault();
 		const itemObj = JSON.parse(evt.target.dataset.itemType);
+		const materialAttr = this.state.attributes;
+		const materialValues = this.state.values;
 		materialAttr.map(matAttr => {
 			if (
 				matAttr.id === itemObj.type &&
@@ -52,6 +56,8 @@ class Material extends React.Component {
 	onClickAttributeHandler = evt => {
 		evt.preventDefault();
 		const itemObj = JSON.parse(evt.target.dataset.itemType);
+		const materialAttr = this.state.attributes;
+		const materialValues = this.state.values;
 		materialAttr.map(matAttr => {
 			if (matAttr.id === itemObj.id) {
 				matAttr.isActive = matAttr.isActive ? false : true;
@@ -77,6 +83,17 @@ class Material extends React.Component {
 			values: sortObj(materialValues)
 		});
 	};
+
+	componentDidMount() {
+		fetch(MOCK_API)
+			.then(response => response.json())
+			.then(data =>
+				this.setState({
+					attributes: data.materialAttr,
+					values: sortObj(data.materialValues)
+				})
+			);
+	}
 
 	render() {
 		return (
